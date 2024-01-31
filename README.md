@@ -51,33 +51,47 @@
 - Select transaction time column, make sure that 10 hours has been added to the time that previously was set.
 
 ####1
+
+
 CREATE type statuses as enum('NEW', 'PAID', 'WAITING FOR PAYMENT');
 CREATE TABLE Invoices (buyer INT, seller VARCHAR(30), value INT, account_number INT, status statuses)
 INSERT INTO Invoices VALUES (2,'ggg',10,5555,'WAITING FOR PAYMENT');
 INSERT INTO Invoices VALUES (3,'ppp',12,2222,'NEW');
 SELECT buyer FROM Invoices WHERE status = 'NEW';
+
 ####2
+
 ALTER TABLE Invoices ADD COLUMN internal_id uuid
 UPDATE Invoices SET internal_id = '595b2ecd-359f-455f-92e8-d14fac06ced8' WHERE buyer = 2;
 UPDATE Invoices SET internal_id = '605b2ecd-359f-455f-92e8-d14fac06ced8' WHERE buyer = 3;
 select * from Invoices
+
 ####3
+
+
 ALTER TABLE Invoices ADD COLUMN view JSON;
 ALTER TABLE Invoices ADD COLUMN entity JSONB;
 UPDATE Invoices SET view ='{ "buyer": "company a", "seller": "company b", "status": "NEW", "account_number": 123321123, "value": 23.43 }'::JSON
 WHERE buyer = 2;
 UPDATE Invoices SET view ='{ "buyer": "company a", "seller": "company b", "status": "NEW", "account_number": 123321123, "value": 23.43 }'::JSONB
 WHERE buyer = 3;
+
 ####4
+
+
 ALTER TABLE Invoices ADD COLUMN phone_number INTEGER[3]
 UPDATE Invoices SET phone_number =ARRAY[123211233, 125433221, 127643454] WHERE buyer = 2;
 UPDATE Invoices SET phone_number =ARRAY[432323112, 123344311] WHERE buyer = 3;
 SELECT phone_number[2] FROM Invoices WHERE buyer = 3;
 
 ####5
+
 ALTER TABLE Invoices ADD column image_file bytea;
 UPDATE Invoices SET image_file =pg_read_binary_file('/home/dci-student/Desktop/test2.txt')::bytea WHERE buyer = 3
+
+
 ####6
+
 ALTER TABLE Invoices
 ADD COLUMN payment_deadline DATE,
 ADD COLUMN transaction_time TIMESTAMP,
